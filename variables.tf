@@ -1,6 +1,11 @@
-variable "dockerfile_folder" {
+variable "docker_build_context_dir" {
   type        = string
-  description = "This is the folder which contains the Dockerfile"
+  description = "This is the dir which is passed to docker build as context, i.e. root from where docker build is run"
+}
+
+variable "dockerfile_loc" {
+  type        = string
+  description = "This is the path to specific Dockerfile being built"
 }
 
 variable "docker_image_tag" {
@@ -20,3 +25,8 @@ variable "ecr_repository_url" {
   description = "Full url for the ecr repository"
 }
 
+variable "local_integration_testing" {
+  type        = bool
+  default     = false
+  description = "Setting this flag to true will skip authentication and push the image to localstack ecr"
+}
