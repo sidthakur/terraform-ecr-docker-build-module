@@ -1,6 +1,9 @@
 # Terraform Docker build and ECR push module
 
-This is a quite hacky module which contains few bash scripts which build docker images locally and pushes them into AWS ECR using aws cli.
+Forked from [onnimonni/terraform-ecr-docker-build-module](https://github.com/sidthakur/terraform-ecr-docker-build-module)
+
+Extended to add support for separate docker build context, specific Dockerfile and enable/disable for local integration
+testing.
 
 ## Requirements
 
@@ -20,26 +23,32 @@ You need to provide AWS credentials as env or profile for aws-cli for this modul
 
 ## Example
 ```hcl
-# Create ECR repository
-resource "aws_ecr_repository" "test_service" {
-  name = "example-service-name"
+# Reference existing ECR repository
+data "aws_ecr_repository" "test_service" {
+  name = "example-service"
 }
 
 # Build Docker image and push to ECR from folder: ./example-service-directory
 module "ecr_docker_build" {
-  source = "github.com/onnimonni/terraform-ecr-docker-build-module"
+  source = "github.com/sidthakur/terraform-ecr-docker-build-module"
 
   # Absolute path into the service which needs to be build
-  dockerfile_folder = "${path.module}/example-service-directory"
+  docker_build_context_dir = "${path.module}/example-service-directory"
+  
+  # Absolute path to the Dockerfile
+  docker_build_context_dir = "${path.module}/example-service-directory/Dockerfile"
 
-  # Tag for the builded Docker image (Defaults to 'latest')
+  # Tag for the Docker image being built (Defaults to 'latest')
   docker_image_tag = "development"
   
   # The region which we will log into with aws-cli
   aws_region = "eu-west-1"
 
   # ECR repository where we can push
-  ecr_repository_url = "${aws_ecr_repository.test_service.repository_url}"
+  ecr_repository_url = data.aws_ecr_repository.test_service.repository_url
+  
+  # Set local integration testing to true
+  local_integration_testing = true
 }
 ```
 
@@ -48,3 +57,4 @@ MIT
 
 ## Author
 [Onni Hakala](https://github.com/onnimonni)
+[Siddharth Thakur](https://github.com/sidthakur)
