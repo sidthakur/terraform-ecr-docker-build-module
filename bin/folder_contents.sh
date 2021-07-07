@@ -5,9 +5,9 @@ set -e
 
 # List of arguments
 build_folder=$1
-exclude_tar_dirs_terraform='--exclude=".terraform" --exclude="*.tfstate*"'
+exclude_tar_dirs_terraform='--exclude=".terraform" --exclude=".terraform*" --exclude="*.tfstate*"'
 exclude_tar_dirs_general='--exclude=".git" --exclude="tests"'
-exclude_tar_dirs_python='--exclude=".pytest_cache" --exclude="tests" --exclude="__pycache__"'
+exclude_tar_dirs_python='--exclude=".pytest_cache" --exclude="__pycache__"'
 
 which tar > /dev/null || { echo 'ERROR: tar is not installed' ; exit 1; }
 
