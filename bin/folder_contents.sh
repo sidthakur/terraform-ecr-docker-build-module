@@ -5,9 +5,6 @@ set -e
 
 # List of arguments
 build_folder=$1
-exclude_tar_dirs_terraform='--exclude=".terraform" --exclude=".terraform*" --exclude="*.tfstate*"'
-exclude_tar_dirs_general='--exclude=".git" --exclude="tests" --exclude=".idea"'
-exclude_tar_dirs_python='--exclude=".pytest_cache" --exclude="__pycache__"'
 
 which tar > /dev/null || { echo 'ERROR: tar is not installed' ; exit 1; }
 
@@ -21,14 +18,13 @@ else
   exit 255
 fi
 
-## Check folder exists
+# Check folder exists
 [ -d "$build_folder" ] || { echo "ERROR: Directory $build_folder not found" ; exit 1; }
 
-### Archive using git archive
-archive_cmd="tar -c $exclude_tar_dirs_terraform $exclude_tar_dirs_general $exclude_tar_dirs_python -f - $build_folder"
-
-# Take md5 from each object inside the program and then take a md5 of that output
-md5_output=$(eval $archive_cmd | $MD5_PROGRAM )
+# Take md5 of the archive file
+md5_output=$(tar -c --exclude=".git" --exclude="tests" --exclude="*tests" --exclude=".idea" \
+       --exclude=".terraform" --exclude=".terraform*" --exclude="*.tfstate*" \
+       --exclude=".pytest_cache" --exclude="__pycache__" -f - "$build_folder" | eval $MD5_PROGRAM)
 
 # Output result as JSON back to terraform
 echo "{ \"md5\": \"$md5_output\" }"
