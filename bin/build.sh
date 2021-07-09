@@ -41,4 +41,9 @@ echo "Building $aws_ecr_repository_url_with_tag from $docker_build_context_dir u
 docker build -t $aws_ecr_repository_url_with_tag -f $dockerfile_loc $docker_build_context_dir
 
 # Push image
-docker push $aws_ecr_repository_url_with_tag
+# If local_integration_testing is set to true, then skip authentication
+if [ "$local_integration_testing" == "true" ]; then
+  echo "Local integration testing mode. Skipping docker push"
+else
+  docker push $aws_ecr_repository_url_with_tag
+fi
