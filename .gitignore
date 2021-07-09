@@ -5,3 +5,6 @@ terraform.tfstate*
 
 # Ignore plugins which were installed during testing
 .terraform
+
+# Ignore PyCharm local config
+/.idea/
